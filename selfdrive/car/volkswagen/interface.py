@@ -25,12 +25,12 @@ class CarInterface(CarInterfaceBase):
     ret.communityFeature = True  # VW port is a community feature, since we don't own one to test
     ret.enableCamera = True
     ret.radarOffCan = True
+    ret.steerLimitTimer = 0.4
 
     if True:  # pylint: disable=using-constant-test
       # Set common MQB parameters that will apply globally
       ret.carName = "volkswagen"
       ret.safetyModel = car.CarParams.SafetyModel.volkswagen
-      ret.steerActuatorDelay = 0.05
 
       ret.enableBsm = 0x30F in fingerprint[0]
 
@@ -45,20 +45,22 @@ class CarInterface(CarInterfaceBase):
         ret.transmissionType = TransmissionType.manual
       cloudlog.info("Detected transmission type: %s", ret.transmissionType)
 
-    # Must-set per-chassis tuning values
+    # Required per-CAR attributes
     ret.mass = ATTRIBUTES[candidate]["mass"] + STD_CARGO_KG
     ret.wheelbase = ATTRIBUTES[candidate]["wheelbase"]
-    # May-set per-chassis tuning values, with defaults
-    ret.steerRateCost = ATTRIBUTES[candidate].setdefault("steerRateCost", 1.0)
-    ret.steerRatio = ATTRIBUTES[candidate].setdefault("steerRatio", 15.6)  # Params learner can figure out
     ret.centerToFront = ret.wheelbase * 0.45
+    # Optional per-CAR attributes, with defaults
+    ret.steerActuatorDelay = ATTRIBUTES[candidate].setdefault("steer_actuator_delay", 0.05)  # Seems good for most MQB
+    ret.steerRatio = ATTRIBUTES[candidate].setdefault("steer_ratio", 15.6)  # Updated by params learner
+    # Tuning values, currently using the same tune for all MQB
+    # If we need to get more complicated, we will probably need to look up by EPS FW
+    ret.steerRateCost = 1.0
+    tire_stiffness_factor = 1.0  # Updated by params learner
     [ ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kiBP,
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV,
-      ret.lateralTuning.pid.kf ] = ATTRIBUTES[candidate].setdefault("lateral_pid", ([0.], [0.], [0.6], [0.2], 0.00006))
+      ret.lateralTuning.pid.kf ] = ([0.], [0.], [0.6], [0.2], 0.00006)
 
     # Global tuning defaults, can be overridden per-vehicle
-    ret.steerLimitTimer = 0.4
-    tire_stiffness_factor = 1.0  # Let the params learner figure this out
 
     # TODO: get actual value, for now starting with reasonable value for
     # civic and scaling by mass and wheelbase
