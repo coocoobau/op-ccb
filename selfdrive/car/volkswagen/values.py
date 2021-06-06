@@ -71,6 +71,7 @@ class CAR:
 
 # Required attributes: mass, wheelbase
 # Optional attributes: steer_actuator_delay, steer_ratio
+
 ATTRIBUTES = {
   CAR.ATLAS_MK1: { "mass": 2011., "wheelbase": 2.98 },
   CAR.GOLF_MK7: {"mass": 1397., "wheelbase": 2.62 },
@@ -84,12 +85,6 @@ ATTRIBUTES = {
   CAR.SKODA_OCTAVIA_MK3: {"mass": 1388., "wheelbase": 2.68 },
   CAR.SKODA_SCALA_MK1: {"mass": 1192., "wheelbase": 2.65 },
   CAR.SKODA_SUPERB_MK3: {"mass": 1505., "wheelbase": 2.84 },
-}
-
-# Required attributes: steer_rate_cost, lateral_pid
-# lateral_pid ([kpBP], [kiBP], [kpV], [kiV], kf)
-CONTROLS = {
-
 }
 
 FW_VERSIONS = {
