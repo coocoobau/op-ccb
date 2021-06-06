@@ -22,7 +22,7 @@ class CarInterface(CarInterfaceBase):
   def get_params(candidate, fingerprint=gen_empty_fingerprint(), car_fw=None):
     ret = CarInterfaceBase.get_std_params(candidate, fingerprint)
 
-    ret.communityFeature = True  # VW port is a community feature, since we don't own one to test
+    ret.communityFeature = True  # VW port is a community feature
     ret.enableCamera = True
     ret.radarOffCan = True
     ret.steerLimitTimer = 0.4
