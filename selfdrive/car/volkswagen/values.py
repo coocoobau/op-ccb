@@ -69,6 +69,23 @@ class CAR:
   SKODA_SUPERB_MK3 = "SKODA SUPERB 3RD GEN"   # Chassis 3V/NP, Mk3 Skoda Superb and variants
   SKODA_OCTAVIA_MK3 = "SKODA OCTAVIA 3RD GEN" # Chassis NE, Mk3 Skoda Octavia and variants
 
+# Required attributes: mass, wheelbase
+# Optional attributes: steerRatio, steerRateCost, lateral_pid ([kpBP], [kiBP], [kpV], [kiV], kf)
+ATTRIBUTES = {
+  CAR.ATLAS_MK1: { "mass": 2011., "wheelbase": 2.98 },
+  CAR.GOLF_MK7: {"mass": 1397., "wheelbase": 2.62 },
+  CAR.JETTA_MK7: {"mass": 1328., "wheelbase": 2.71 },
+  CAR.PASSAT_MK8: {"mass": 1551., "wheelbase": 2.79 },
+  CAR.TIGUAN_MK2: {"mass": 1715., "wheelbase": 2.74 },
+  CAR.AUDI_A3_MK3: {"mass": 1335., "wheelbase": 2.61, "lateral_pid": ([0.], [0.], [0.5], [0.1], 0.00006) },
+  CAR.SEAT_ATECA_MK1: {"mass": 1900., "wheelbase": 2.64 },
+  CAR.SEAT_LEON_MK3: {"mass": 1227., "wheelbase": 2.64 },
+  CAR.SKODA_KODIAQ_MK1: {"mass": 1569., "wheelbase": 2.79 },
+  CAR.SKODA_OCTAVIA_MK3: {"mass": 1388., "wheelbase": 2.68 },
+  CAR.SKODA_SCALA_MK1: {"mass": 1192., "wheelbase": 2.65 },
+  CAR.SKODA_SUPERB_MK3: {"mass": 1505., "wheelbase": 2.84 },
+}
+
 FW_VERSIONS = {
   CAR.ATLAS_MK1: {
     (Ecu.engine, 0x7e0, None): [
