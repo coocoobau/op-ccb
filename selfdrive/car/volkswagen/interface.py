@@ -32,8 +32,6 @@ class CarInterface(CarInterfaceBase):
       ret.carName = "volkswagen"
       ret.safetyModel = car.CarParams.SafetyModel.volkswagen
 
-      ret.enableBsm = 0x30F in fingerprint[0]  # SWA_01
-
       if 0xAD in fingerprint[0]:  # Getriebe_11
         ret.transmissionType = TransmissionType.automatic
       elif 0x187 in fingerprint[0]:  # EV_Gearshift
@@ -42,6 +40,8 @@ class CarInterface(CarInterfaceBase):
         ret.transmissionType = TransmissionType.manual
       cloudlog.info("Detected transmission type: %s", ret.transmissionType)
 
+      ret.enableBsm = 0x30F in fingerprint[0]  # SWA_01
+
     # Required per-CAR attributes
     ret.mass = ATTRIBUTES[candidate]["mass"] + STD_CARGO_KG
     ret.wheelbase = ATTRIBUTES[candidate]["wheelbase"]
@@ -49,6 +49,7 @@ class CarInterface(CarInterfaceBase):
     # Optional per-CAR attributes, with defaults
     ret.steerActuatorDelay = ATTRIBUTES[candidate].setdefault("steer_actuator_delay", 0.05)  # Seems good for most MQB
     ret.steerRatio = ATTRIBUTES[candidate].setdefault("steer_ratio", 15.6)  # Updated by params learner
+
     # Tuning values, currently using the same tune for all MQB
     # If we need to tune individual models, we will need a dict lookup by EPS parameterization, not just CAR
     ret.steerRateCost = 1.0
