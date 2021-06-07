@@ -51,7 +51,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerRatio = ATTRIBUTES[candidate].setdefault("steer_ratio", 15.6)  # Updated by params learner
 
     # Tuning values, currently using the same tune for all MQB
-    # If we need to tune individual models, we will need a dict lookup by EPS parameterization, not just CAR
+    # If we need to tune individual models, we'll need a dict lookup by EPS parameterization, not just CAR
     ret.steerRateCost = 1.0
     tire_stiffness_factor = 1.0  # Updated by params learner
     [ ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kiBP,
