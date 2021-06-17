@@ -121,7 +121,8 @@ def handle_fan_uno(max_cpu_temp, bat_temp, fan_speed, voltage, ignition):
 
   # Scale fan speed with vehicle power supply, compensates for fluctuations from
   # energy management, recuperation/coasting increases, dips during auto start-stop
-  new_speed = new_speed * (12.6 // voltage * 1.05)
+  if new_speed > 0:
+    new_speed = new_speed * (12.6 // voltage * 1.05)
 
   return new_speed
 
