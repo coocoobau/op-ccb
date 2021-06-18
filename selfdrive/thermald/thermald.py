@@ -271,7 +271,7 @@ def thermald_thread():
     bat_temp = msg.deviceState.batteryTempC
 
     if handle_fan is not None:
-      fan_speed = handle_fan(max_cpu_temp, bat_temp, fan_speed, msg.deviceState.batteryVoltage,
+      fan_speed = handle_fan(max_cpu_temp, bat_temp, fan_speed, pandaState.pandaState.voltage,
               startup_conditions["ignition"])
       msg.deviceState.fanSpeedPercentDesired = fan_speed
 
