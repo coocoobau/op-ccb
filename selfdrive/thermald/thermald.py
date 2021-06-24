@@ -96,7 +96,7 @@ _FAN_SPEEDS = [0, 16384, 32768, 65535]
 _BAT_TEMP_THRESHOLD = 45.
 
 
-def handle_fan_eon(max_cpu_temp, bat_temp, fan_speed, ignition):
+def handle_fan_eon(max_cpu_temp, bat_temp, fan_speed, voltage, ignition):
   new_speed_h = next(speed for speed, temp_h in zip(_FAN_SPEEDS, _TEMP_THRS_H) if temp_h > max_cpu_temp)
   new_speed_l = next(speed for speed, temp_l in zip(_FAN_SPEEDS, _TEMP_THRS_L) if temp_l > max_cpu_temp)
 
@@ -116,11 +116,16 @@ def handle_fan_eon(max_cpu_temp, bat_temp, fan_speed, ignition):
   return fan_speed
 
 
-def handle_fan_uno(max_cpu_temp, bat_temp, fan_speed, ignition):
+def handle_fan_uno(max_cpu_temp, bat_temp, fan_speed, voltage, ignition):
   new_speed = int(interp(max_cpu_temp, [40.0, 80.0], [0, 80]))
 
   if not ignition:
     new_speed = min(30, new_speed)
+
+  # Scale fan PWM with vehicle power supply, compensates for fluctuations from
+  # energy management, recuperation/coasting increases, dips during auto start-stop
+  if new_speed > 0:
+    new_speed = int(clip(new_speed * (12600 / voltage * 1.05), 0, 100))
 
   return new_speed
 
@@ -290,7 +295,8 @@ def thermald_thread():
     bat_temp = msg.deviceState.batteryTempC
 
     if handle_fan is not None:
-      fan_speed = handle_fan(max_cpu_temp, bat_temp, fan_speed, startup_conditions["ignition"])
+      fan_speed = handle_fan(max_cpu_temp, bat_temp, fan_speed, pandaState.pandaState.voltage,
+                             startup_conditions["ignition"])
       msg.deviceState.fanSpeedPercentDesired = fan_speed
 
     # If device is offroad we want to cool down before going onroad
