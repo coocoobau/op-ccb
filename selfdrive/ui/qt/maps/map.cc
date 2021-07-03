@@ -117,6 +117,10 @@ void MapWindow::initLayers() {
 }
 
 void MapWindow::timerUpdate() {
+  if (isVisible()) {
+    update();
+  }
+
   loaded_once = loaded_once || m_map->isFullyLoaded();
   if (!loaded_once) {
     map_instructions->showError("Map loading");
@@ -219,11 +223,10 @@ void MapWindow::timerUpdate() {
       map_instructions->showError("Waiting for GPS");
     }
   }
-
-  update();
 }
 
 void MapWindow::resizeGL(int w, int h) {
+  m_map->resize(size() / MAP_SCALE);
   map_instructions->setFixedWidth(width());
 }
 
@@ -241,14 +244,16 @@ void MapWindow::initializeGL() {
   m_map->setStyleUrl("mapbox://styles/commadotai/ckq7zp8ts1k0o17p8m6rv6cet");
 
   connect(m_map.data(), SIGNAL(needsRendering()), this, SLOT(update()));
+  QObject::connect(m_map.data(), &QMapboxGL::mapChanged, [=](QMapboxGL::MapChange change) {
+    if (change == QMapboxGL::MapChange::MapChangeDidFinishLoadingMap) {
+      loaded_once = true;
+    }
+  });
   timer->start(100);
 }
 
 void MapWindow::paintGL() {
   if (!isVisible()) return;
-
-  m_map->resize(size() / MAP_SCALE);
-  m_map->setFramebufferObject(defaultFramebufferObject(), size());
   m_map->render();
 }
 
